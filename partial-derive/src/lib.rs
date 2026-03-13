@@ -68,6 +68,7 @@ impl FromMeta for PathList {
                 }
             }
         }
+
         Ok(PathList(paths))
     }
 }
@@ -92,6 +93,7 @@ impl FieldOpts {
             Some(ty_str) => syn::parse_str(ty_str).expect("invalid type override"),
             None => self.ty.clone(),
         };
+
         if self.option {
             syn::parse_quote! { Option<#base> }
         } else {

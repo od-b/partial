@@ -1,6 +1,6 @@
 [workspace]
-members = ["derive-partial", "partial-traits", "tests"]
-default_member = "tests"
+members = ["partial-derive", "partial-traits", "partial-tests"]
+default_member = "partial-tests"
 edition = "2024"
 resolver = "3"
 

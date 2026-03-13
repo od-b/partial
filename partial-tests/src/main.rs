@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use derive_partial::{FromPartial, IntoPartial, NewPartial, Partial};
+use partial_derive::{FromPartial, IntoPartial, NewPartial, Partial};
 use partial_traits;
 use serde::{Deserialize, Serialize};
 
@@ -78,7 +78,7 @@ struct Article {
 
 /// Public struct with pub fields
 pub mod models {
-    use derive_partial::Partial;
+    use partial_derive::Partial;
 
     #[derive(Partial)]
     #[partial(name = CreateItem, derive(Debug, PartialEq))]
@@ -340,7 +340,7 @@ mod tests {
             text: "Hello".into(),
         };
         let partial: UpdateBio = b.into_partial();
-        // String → Option<String> via .into()
+        // String -> Option<String> via .into()
         assert_eq!(partial.text, Some("Hello".into()));
     }
 
