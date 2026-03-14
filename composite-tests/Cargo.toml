@@ -1,0 +1,12 @@
+[package]
+name = "composite-tests"
+edition.workspace = true
+version.workspace = true
+
+[dependencies]
+
+composite-traits = { workspace = true }
+composite-derive = { workspace = true }
+
+serde.workspace = true
+serde_json = "1.0.149"

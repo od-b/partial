@@ -1,65 +1,65 @@
 #![allow(unused)]
 
-use partial_derive::{FromPartial, IntoPartial, NewPartial, Partial};
-use partial_traits;
+use composite_derive::{FromComposite, IntoComposite, NewComposite, Composite};
+use composite_traits::*;
 use serde::{Deserialize, Serialize};
 
 /// Explicit name, skip, rename, option
-#[derive(Serialize, Deserialize, Partial)]
-#[partial(name = CreateUser, derive(Debug, PartialEq, Deserialize))]
+#[derive(Serialize, Deserialize, Composite)]
+#[composite(name = CreateUser, derive(Debug, PartialEq, Deserialize))]
 struct User {
-    #[partial(skip)]
+    #[composite(skip)]
     /// user ID
     id: u64,
-    #[partial(rename = "username")]
+    #[composite(rename = "username")]
     /// username
     name: String,
-    #[partial(option)]
+    #[composite(option)]
     location: String,
     email: String,
 }
 
 /// Default name (no `name = ...`)
-#[derive(Partial)]
-#[partial(derive(Debug, PartialEq))]
+#[derive(Composite)]
+#[composite(derive(Debug, PartialEq))]
 struct Config {
     host: String,
     port: u16,
 }
 
 /// No derives
-#[derive(Partial)]
+#[derive(Composite)]
 struct Minimal {
     value: i32,
 }
 
 /// Type override
-#[derive(Partial)]
-#[partial(name = UpdateProfile, derive(Debug, PartialEq))]
+#[derive(Composite)]
+#[composite(name = UpdateProfile, derive(Debug, PartialEq))]
 struct Profile {
-    #[partial(skip)]
+    #[composite(skip)]
     id: u64,
-    #[partial(ty_override = "Option<String>")]
+    #[composite(ty_override = "Option<String>")]
     bio: String,
     avatar_url: String,
 }
 
 /// Combined field attributes (option + rename)
-#[derive(Partial)]
-#[partial(name = PatchSettings, derive(Debug, PartialEq))]
+#[derive(Composite)]
+#[composite(name = PatchSettings, derive(Debug, PartialEq))]
 struct Settings {
-    #[partial(option, rename = "dark_mode")]
+    #[composite(option, rename = "dark_mode")]
     theme_is_dark: bool,
-    #[partial(option)]
+    #[composite(option)]
     font_size: u32,
     language: String,
 }
 
 /// Serde attribute forwarding
-#[derive(Serialize, Deserialize, Partial)]
-#[partial(name = ApiRequest, derive(Debug, PartialEq, Deserialize))]
+#[derive(Serialize, Deserialize, Composite)]
+#[composite(name = ApiRequest, derive(Debug, PartialEq, Deserialize))]
 struct InternalRequest {
-    #[partial(skip)]
+    #[composite(skip)]
     internal_id: u64,
     #[serde(rename = "req_type")]
     request_type: String,
@@ -67,10 +67,10 @@ struct InternalRequest {
 }
 
 /// Custom doc
-#[derive(Partial)]
-#[partial(name = NewArticle, derive(Debug, PartialEq), doc = "Used to create a new article.")]
+#[derive(Composite)]
+#[composite(name = NewArticle, derive(Debug, PartialEq), doc = "Used to create a new article.")]
 struct Article {
-    #[partial(skip)]
+    #[composite(skip)]
     id: u64,
     title: String,
     body: String,
@@ -78,75 +78,73 @@ struct Article {
 
 /// Public struct with pub fields
 pub mod models {
-    use partial_derive::Partial;
+    use super::Composite;
 
-    #[derive(Partial)]
-    #[partial(name = CreateItem, derive(Debug, PartialEq))]
+    #[derive(Composite)]
+    #[composite(name = CreateItem, derive(Debug, PartialEq))]
     pub struct Item {
-        #[partial(skip)]
+        #[composite(skip)]
         pub id: u64,
         pub name: String,
         pub price: f64,
     }
 }
 
-/// NewPartial standalone derive
-#[derive(Debug, PartialEq, Partial, NewPartial)]
-#[partial(name = CreatePost, derive(Debug, PartialEq))]
+/// NewComposite standalone derive
+#[derive(Debug, PartialEq, Composite, NewComposite)]
+#[composite(name = CreatePost, derive(Debug, PartialEq))]
 struct Post {
-    #[partial(skip)]
+    #[composite(skip)]
     id: u64,
     title: String,
     body: String,
-    #[partial(option)]
+    #[composite(option)]
     tags: Vec<String>,
 }
 
-/// FromPartial + IntoPartial (skip only)
-#[derive(Debug, PartialEq, Partial, FromPartial, IntoPartial)]
-#[partial(name = NewEmployee, derive(Debug, PartialEq))]
+/// FromComposite + IntoComposite (skip only)
+#[derive(Debug, PartialEq, Composite, FromComposite, IntoComposite)]
+#[composite(name = NewEmployee, derive(Debug, PartialEq))]
 struct Employee {
-    #[partial(skip)]
+    #[composite(skip)]
     id: u64,
     name: String,
     department: String,
 }
 
 /// All four derives with rename + option + skip
-#[derive(Debug, PartialEq, Partial, NewPartial, FromPartial, IntoPartial)]
-#[partial(name = CreateOrder, derive(Debug, PartialEq))]
+#[derive(Debug, PartialEq, Composite, NewComposite, FromComposite, IntoComposite)]
+#[composite(name = CreateOrder, derive(Debug, PartialEq))]
 struct Order {
-    #[partial(skip)]
+    #[composite(skip)]
     id: u64,
-    #[partial(rename = "product")]
+    #[composite(rename = "product")]
     product_name: String,
     quantity: u32,
-    #[partial(option)]
+    #[composite(option)]
     notes: String,
 }
 
-/// FromPartial + IntoPartial with no skipped fields
-#[derive(Debug, PartialEq, Partial, FromPartial, IntoPartial)]
-#[partial(name = PartialPoint, derive(Debug, PartialEq))]
+/// FromComposite + IntoComposite with no skipped fields
+#[derive(Debug, PartialEq, Composite, FromComposite, IntoComposite)]
+#[composite(name = CompositePoint, derive(Debug, PartialEq))]
 struct Point {
     x: f64,
     y: f64,
 }
 
-/// IntoPartial with type override
-#[derive(Debug, PartialEq, Partial, IntoPartial)]
-#[partial(name = UpdateBio, derive(Debug, PartialEq))]
+/// IntoComposite with type override
+#[derive(Debug, PartialEq, Composite, IntoComposite)]
+#[composite(name = UpdateBio, derive(Debug, PartialEq))]
 struct Bio {
-    #[partial(ty_override = "Option<String>")]
+    #[composite(ty_override = "Option<String>")]
     text: String,
 }
-
-fn main() {}
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use partial_traits::{FromPartial, IntoPartial};
+    use composite_traits::{FromComposite, IntoComposite};
 
     #[test]
     fn explicit_name_with_skip_rename_option() {
@@ -172,7 +170,7 @@ mod tests {
 
     #[test]
     fn default_name() {
-        let c = PartialConfig {
+        let c = CompositeConfig {
             host: "localhost".into(),
             port: 8080,
         };
@@ -182,7 +180,7 @@ mod tests {
 
     #[test]
     fn no_derives() {
-        let m = PartialMinimal { value: 42 };
+        let m = CompositeMinimal { value: 42 };
         assert_eq!(m.value, 42);
     }
 
@@ -242,8 +240,8 @@ mod tests {
     }
 
     #[test]
-    fn new_partial_constructor() {
-        let p = Post::new_partial(
+    fn new_composite_constructor() {
+        let p = Post::new_composite(
             "My Post".into(),
             "Content".into(),
             Some(vec!["rust".into(), "macros".into()]),
@@ -254,33 +252,33 @@ mod tests {
     }
 
     #[test]
-    fn new_partial_option_none() {
-        let p = Post::new_partial("Untitled".into(), "Empty".into(), None);
+    fn new_composite_option_none() {
+        let p = Post::new_composite("Untitled".into(), "Empty".into(), None);
         assert_eq!(p.tags, None);
     }
 
     #[test]
-    fn from_partial_with_skipped_field() {
-        let partial = NewEmployee {
+    fn from_composite_with_skipped_field() {
+        let composite = NewEmployee {
             name: "Alice".into(),
             department: "Engineering".into(),
         };
-        let emp = Employee::from_partial(partial, NewEmployeeMissing { id: 42 });
+        let emp = Employee::from_composite(composite, NewEmployeeMissing { id: 42 });
         assert_eq!(emp.id, 42);
         assert_eq!(emp.name, "Alice");
         assert_eq!(emp.department, "Engineering");
     }
 
     #[test]
-    fn from_partial_with_skip_rename_option() {
-        let partial = CreateOrder {
+    fn from_composite_with_skip_rename_option() {
+        let composite = CreateOrder {
             product: "Widget".into(),
             quantity: 5,
             notes: Some("Rush order".into()),
         };
         // Args: id (skipped) + notes (option-wrapped, original type String)
-        let order = Order::from_partial(
-            partial,
+        let order = Order::from_composite(
+            composite,
             CreateOrderMissing {
                 id: 1,
                 notes: "Noted".into(),
@@ -293,55 +291,55 @@ mod tests {
     }
 
     #[test]
-    fn from_partial_no_extra_args() {
-        let partial = PartialPoint { x: 1.0, y: 2.0 };
-        let pt = Point::from_partial(partial, PartialPointMissing {});
+    fn from_composite_no_extra_args() {
+        let composite = CompositePoint { x: 1.0, y: 2.0 };
+        let pt = Point::from_composite(composite, CompositePointMissing {});
         assert_eq!(pt.x, 1.0);
         assert_eq!(pt.y, 2.0);
     }
 
     #[test]
-    fn into_partial_drops_skipped_fields() {
+    fn into_composite_drops_skipped_fields() {
         let emp = Employee {
             id: 99,
             name: "Bob".into(),
             department: "Sales".into(),
         };
-        let partial: NewEmployee = emp.into_partial();
-        assert_eq!(partial.name, "Bob");
-        assert_eq!(partial.department, "Sales");
+        let composite: NewEmployee = emp.into_composite();
+        assert_eq!(composite.name, "Bob");
+        assert_eq!(composite.department, "Sales");
     }
 
     #[test]
-    fn into_partial_renames_and_wraps_option() {
+    fn into_composite_renames_and_wraps_option() {
         let order = Order {
             id: 10,
             product_name: "Gadget".into(),
             quantity: 3,
             notes: "Handle with care".into(),
         };
-        let partial: CreateOrder = order.into_partial();
-        assert_eq!(partial.product, "Gadget");
-        assert_eq!(partial.quantity, 3);
-        assert_eq!(partial.notes, Some("Handle with care".into()));
+        let composite: CreateOrder = order.into_composite();
+        assert_eq!(composite.product, "Gadget");
+        assert_eq!(composite.quantity, 3);
+        assert_eq!(composite.notes, Some("Handle with care".into()));
     }
 
     #[test]
-    fn into_partial_no_skipped_fields() {
+    fn into_composite_no_skipped_fields() {
         let pt = Point { x: 3.0, y: 4.0 };
-        let partial: PartialPoint = pt.into_partial();
-        assert_eq!(partial.x, 3.0);
-        assert_eq!(partial.y, 4.0);
+        let composite: CompositePoint = pt.into_composite();
+        assert_eq!(composite.x, 3.0);
+        assert_eq!(composite.y, 4.0);
     }
 
     #[test]
-    fn into_partial_type_override() {
+    fn into_composite_type_override() {
         let b = Bio {
             text: "Hello".into(),
         };
-        let partial: UpdateBio = b.into_partial();
+        let composite: UpdateBio = b.into_composite();
         // String -> Option<String> via .into()
-        assert_eq!(partial.text, Some("Hello".into()));
+        assert_eq!(composite.text, Some("Hello".into()));
     }
 
     #[test]
@@ -351,8 +349,8 @@ mod tests {
             name: "Carol".into(),
             department: "HR".into(),
         };
-        let partial: NewEmployee = emp.into_partial();
-        let restored = Employee::from_partial(partial, NewEmployeeMissing { id: 7 });
+        let composite: NewEmployee = emp.into_composite();
+        let restored = Employee::from_composite(composite, NewEmployeeMissing { id: 7 });
         assert_eq!(
             restored,
             Employee {
@@ -366,16 +364,16 @@ mod tests {
     #[test]
     fn roundtrip_no_skipped() {
         let pt = Point { x: 1.5, y: 2.5 };
-        let partial: PartialPoint = pt.into_partial();
-        let restored = Point::from_partial(partial, PartialPointMissing {});
+        let composite: CompositePoint = pt.into_composite();
+        let restored = Point::from_composite(composite, CompositePointMissing {});
         assert_eq!(restored, Point { x: 1.5, y: 2.5 });
     }
 
     #[test]
-    fn new_partial_then_from_partial() {
-        let partial = Order::new_partial("Wrench".into(), 10, None);
-        let order = Order::from_partial(
-            partial,
+    fn new_composite_then_from_composite() {
+        let composite = Order::new_composite("Wrench".into(), 10, None);
+        let order = Order::from_composite(
+            composite,
             CreateOrderMissing {
                 id: 42,
                 notes: "No notes".into(),
